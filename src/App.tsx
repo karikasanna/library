@@ -32,7 +32,7 @@ const LibraryContext = createContext<LibraryContextType | undefined>(undefined);
 export const useLibrary = () => {
   const context = useContext(LibraryContext);
   if (!context) {
-    throw new Error("useLibrary must be used inside LibraryProvider");
+    throw new Error("A useLibrary-t a LibraryProvider-en belül kell használni.");
   }
   return context;
 };
@@ -109,7 +109,7 @@ const SearchBar = () => {
 
   return (
     <input
-      placeholder="Keresés cím vagy szerző szerint..."
+      placeholder="Keresés"
       value={searchTerm}
       onChange={(e) => setSearchTerm(e.target.value)}
     />
@@ -135,7 +135,7 @@ const BookList = () => {
     <ul>
       {filteredBooks.map((book) => (
         <li key={book.title}>
-          <strong>{book.title}</strong> – {book.author} ({book.year})  
+          <h3>{book.title}</h3> – {book.author} ({book.year})  
           <br />
           Műfaj: {book.genre} | Oldalak: {book.pages}
           <br />
