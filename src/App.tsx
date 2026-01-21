@@ -24,6 +24,7 @@ type LibraryContextType = {
   setSortBy: (value: string) => void;
   addBook: (book: Book) => void;
   toggleRead: (title: string) => void;
+  deleteBook: (title: string) => void;
 };
 
 const LibraryContext = createContext<LibraryContextType | undefined>(undefined);
@@ -141,10 +142,14 @@ const LibraryProvider = ({ children }: { children: ReactNode }) => {
           read: !book.read,
         };
       }
-
       return book;
     });
 
+    setBooks(newBooks);
+  };
+
+  const deleteBook = (title: string) => {
+    const newBooks = books.filter((book) => book.title !== title);
     setBooks(newBooks);
   };
 
@@ -178,6 +183,7 @@ const LibraryProvider = ({ children }: { children: ReactNode }) => {
         setSortBy,
         addBook,
         toggleRead,
+        deleteBook,
       }}
     >
       {children}
@@ -209,20 +215,35 @@ const SortControls = () => {
   );
 };
 
+const Stats = () => {
+  const { books } = useLibrary();
+
+  const readCount = books.filter((book) => book.read).length;
+
+  return (
+    <div>
+      <p>Összes könyv: {books.length}</p>
+      <p>Olvasott könyvek: {readCount}</p>
+    </div>
+  );
+};
+
 const BookList = () => {
-  const { filteredBooks, toggleRead } = useLibrary();
+  const { filteredBooks, toggleRead, deleteBook } = useLibrary();
 
   return (
     <ul>
       {filteredBooks.map((book) => (
         <li key={book.title}>
-          <h3>{book.title}</h3> – {book.author} ({book.year})
+          <h3>{book.title}</h3>
+          {book.author} ({book.year})
           <br />
           Műfaj: {book.genre} | Oldalak: {book.pages}
           <br />
           <button onClick={() => toggleRead(book.title)}>
             {book.read ? "Olvasott" : "Nem olvasott"}
           </button>
+          <button onClick={() => deleteBook(book.title)}>Törlés</button>
         </li>
       ))}
     </ul>
@@ -301,6 +322,7 @@ export default function App() {
       <h1>Könyvtár</h1>
       <SearchBar />
       <SortControls />
+      <Stats />
       <AddBookForm />
       <BookList />
     </LibraryProvider>
